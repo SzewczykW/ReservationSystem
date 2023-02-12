@@ -54,3 +54,4 @@ dkms.conf
 # Build and documenation build library
 build
 doc
+.vscode
