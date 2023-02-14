@@ -10,7 +10,8 @@ TEST* test_new(int a, int b, const char *str)
     TEST *t = malloc(sizeof(TEST));
     t->a = a;
     t->b = b;
-    t->str = strdup(str);
+    t->str = malloc(strlen(str) + 1);
+    strcpy(t->str, str);
     return t;
 }
 
