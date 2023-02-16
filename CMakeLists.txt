@@ -28,7 +28,7 @@ add_definitions(-DPROJECTPATH=\"${PROJECT_SOURCE_DIR}\")
 #
 
 # Create the project
-project ("ReservationSystem" C)
+project ("ReservationSystem" VERSION 0.0.1 LANGUAGES C)
 
 # C standard required by the project
 set (CMAKE_C_STANDARD 17)
@@ -38,14 +38,14 @@ set (CMAKE_C_EXTENSIONS OFF) #No compiler specific extensions
 # Selected flags don't work at compile time
 if (MSVC)
     set (CMAKE_CC_FLAGS
-        "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"                   # Build type specific flags
-        "/W4"                                                           # All warnings
-        "/WX"                                                           # Treat warnings as errors
-        "/std:c17"                                                      # C standard
+        "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"                        # Build type specific flags
+        "/W4"                                                               # All warnings
+        "/WX"                                                               # Treat warnings as errors
+        "/std:c17"                                                          # C standard
         )
 else ()
     set (CMAKE_CC_FLAGS
-        "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"                       # Build type specific flags
+        "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"                        # Build type specific flags
         "-Wall"                                                             # All warnings
         "-Wextra"                                                           # Extra warnings
         "-Wpedantic"                                                        # Pedantic warnings
