@@ -1,8 +1,13 @@
-cmake_minimum_required (VERSION 3.1.0 FATAL_ERROR)
+############################################################################################################
 
-#
-# Building
-#
+cmake_minimum_required (VERSION 3.3.0 FATAL_ERROR)
+
+# Set the output directory for the install executables and libraries
+set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+set (CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
+set (CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+
+############################################################################################################
 
 # Set the build type if none was specified
 if (NOT CMAKE_BUILD_TYPE)
@@ -21,11 +26,12 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   message (FATAL_ERROR "In-source builds are not allowed.")
 endif ()
 
-add_definitions(-DPROJECTPATH=\"${PROJECT_SOURCE_DIR}\")
+add_definitions (-DPROJECTPATH=\"${PROJECT_SOURCE_DIR}\")
+add_definitions (-DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
+add_definitions (-DPROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\")
+add_definitions (-DCMAKE_BUILD_TYPE=\"${CMAKE_BUILD_TYPE}\")
 
-#
-# Compiling
-#
+############################################################################################################
 
 # Create the project
 project ("ReservationSystem" VERSION 0.0.1 LANGUAGES C)
@@ -35,28 +41,59 @@ set (CMAKE_C_STANDARD 17)
 set (CMAKE_C_STANDARD_REQUIRED ON)
 set (CMAKE_C_EXTENSIONS OFF) #No compiler specific extensions
 
+# C compiler flags configuration checks
+include (CheckCCompilerFlag)
+
+# Set WARN_C_FLAGS_TO_CHECK
+set (WARN_C_FLAGS "")
+
 # Selected flags don't work at compile time
 if (MSVC)
-    set (CMAKE_CC_FLAGS
-        "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"                        # Build type specific flags
+    set (WARN_C_FLAGS_TO_CHECK
         "/W4"                                                               # All warnings
         "/WX"                                                               # Treat warnings as errors
         "/std:c17"                                                          # C standard
         )
 else ()
-    set (CMAKE_CC_FLAGS
-        "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"                        # Build type specific flags
+    set (WARN_C_FLAGS_TO_CHECK                    
         "-Wall"                                                             # All warnings
         "-Wextra"                                                           # Extra warnings
         "-Wpedantic"                                                        # Pedantic warnings
         "-Werror"                                                           # Treat warnings as errors
+        "-Wcast-align"                                                      # Warn for potential performance problem casts
+        "-Wcast-qual"                                                       # Warn for casts discarding qualifiers
         "-std=c17"                                                          # C standard
         )
 endif ()
 
-message (STATUS "CMAKE_CC_FLAGS: ${CMAKE_CC_FLAGS}")
-message (STATUS "CMAKE_C_COMPILER is ${CMAKE_C_COMPILER}")
-message (STATUS "CMAKE_C_COMPILER_VERSION is ${CMAKE_C_COMPILER_VERSION}")
+set (BUILD_TYPE_FLAGS "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+string (REPLACE " " ";" BUILD_TYPE_FLAGS_LIST ${BUILD_TYPE_FLAGS})
+set (WARN_C_FLAGS_TO_CHECK_LIST "${WARN_C_FLAGS_TO_CHECK};${BUILD_TYPE_FLAGS_LIST}")
+message(STATUS "WARN_C_FLAGS_TO_CHECK_LIST: ${WARN_C_FLAGS_TO_CHECK_LIST}")
+
+
+# Check if the compiler supports the flags
+foreach (FLAG ${WARN_C_FLAGS_TO_CHECK_LIST})
+    # Remove [+-=] signs from the flag
+    string(REGEX REPLACE "[-=+]" "" FLAG_NO_SIGNS ${FLAG})
+    # Check if the flag is supported by the compiler
+    CHECK_C_COMPILER_FLAG (${FLAG} C_COMPILER_SUPPORTS_${FLAG_NO_SIGNS})
+    # If so add it to the list of warning flags
+    if (C_COMPILER_SUPPORTS_${FLAG_NO_SIGNS})
+        set (WARN_C_FLAGS "${WARN_C_FLAGS} ${FLAG}")
+    endif ()
+endforeach ()
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WARN_C_FLAGS}")
+
+if(CMAKE_C_COMPILER_LOADED)
+    message (STATUS "C Compiler is loaded")
+    message (STATUS "CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
+    message (STATUS "CMAKE_C_COMPILER_ID is ${CMAKE_C_COMPILER_ID}")
+    message (STATUS "CMAKE_C_COMPILER is ${CMAKE_C_COMPILER}")
+    message (STATUS "CMAKE_C_COMPILER_VERSION is ${CMAKE_C_COMPILER_VERSION}")
+else ()
+    message (FATAL_ERROR "C Compiler is not loaded [FATAL ERROR]")
+endif()
 
 # Set include directories
 set (INCLUDES ${PROJECT_SOURCE_DIR}/include)
@@ -70,9 +107,7 @@ add_library (${PROJECT_NAME}_library SHARED ${SOURCES})
 
 target_include_directories (${PROJECT_NAME}_library PUBLIC ${INCLUDES})
 
-#
-# Linking
-#
+############################################################################################################
 
 # Generate executable
 add_executable (${PROJECT_NAME} ${SOURCES})
@@ -81,33 +116,24 @@ add_executable (${PROJECT_NAME} ${SOURCES})
 target_link_libraries (${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_library)
 
 # Binaries
-install (TARGETS ${PROJECT_NAME} DESTINATION bin)
+install (TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR}) 
 
-#
-# Testing
-#
+# Libraries
+install (TARGETS ${PROJECT_NAME}_library
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+############################################################################################################
 
 enable_testing ()
 
-add_test (NAME Mem COMMAND valgrind --leak-check=full --track-origins=yes --error-exitcode=177 ./${PROJECT_NAME})
+add_test (NAME Mem COMMAND valgrind --leak-check=full --track-origins=yes --error-exitcode=1 ./${PROJECT_NAME})
 
 # test of program 
 
-
-# generate compile_commands json file
-add_custom_target (info # ALL # target zoo is always built
-    COMMAND echo "Build commands:"
-    COMMAND cat compile_commands.json  
-    COMMAND echo "" 
-    COMMAND echo ""
-    COMMAND echo "Debug info:" 
-    COMMAND readelf --debug-dump=decodedline ${PROJECT_NAME}
-    DEPENDS ${PROJECT_NAME}
-)
-
-#
-# Documentation
-#
+############################################################################################################
 
 # documentation generation with doxygen
 

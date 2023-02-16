@@ -1,6 +1,6 @@
 #include "../include/test.h"
 
-int main(int argc, char **argv)
+int main(void)
 {
     TEST *t = test_new(1, 2, "hello");
     test_print(t);
