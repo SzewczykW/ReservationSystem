@@ -1,24 +1,34 @@
 #ifndef ADMIN_HPP
 #define ADMIN_HPP
 
-#include "../include/Users/User.hpp"
 #include "../include/Workers/Worker.hpp"
 
 class Admin : private User {
     public:
-        Admin();
+        /**
+         * @brief Create Admin object
+         * @return Pointer to Admin object
+         */
+        Admin* CreateAdmin ();
+
     private:
         /**
+         * @brief Constructor for Admin object
+         * which contains details about the admin
+         */
+        Admin ();
+
+        /**
          * @brief Workers details
-         * @param Workers
+         * @param _Workers
          */
         Worker* _Workers;
 
         /**
         * @brief methods for adding and removing workers
         */
-        void AddWorker();
-        void RemoveWorker();
+        void AddWorker ();
+        void RemoveWorker ();
 }
 
 #endif
