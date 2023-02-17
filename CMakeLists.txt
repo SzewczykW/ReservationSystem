@@ -34,73 +34,83 @@ add_definitions (-DCMAKE_BUILD_TYPE=\"${CMAKE_BUILD_TYPE}\")
 ############################################################################################################
 
 # Create the project
-project ("ReservationSystem" VERSION 0.0.1 LANGUAGES C)
+project ("ReservationSystem" VERSION 0.0.1 LANGUAGES C CXX)
 
-# C standard required by the project
-set (CMAKE_C_STANDARD 17)
-set (CMAKE_C_STANDARD_REQUIRED ON)
-set (CMAKE_C_EXTENSIONS OFF) #No compiler specific extensions
+# C++ standard required by the project
+set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF) #No compiler specific extensions
 
 # C compiler flags configuration checks
 include (CheckCCompilerFlag)
 
-# Set WARN_C_FLAGS_TO_CHECK
-set (WARN_C_FLAGS "")
+# C++ compiler flags configuration checks
+include (CheckCXXCompilerFlag)
 
-# Selected flags don't work at compile time
+# Set WARN_CXX_FLAGS
+set (WARN_CXX_FLAGS "")
+
+# Set the list of flags depending on the compiler
 if (MSVC)
-    set (WARN_C_FLAGS_TO_CHECK
+    set (WARN_CXX_FLAGS_TO_CHECK
         "/W4"                                                               # All warnings
-        "/WX"                                                               # Treat warnings as errors
-        "/std:c17"                                                          # C standard
+        "/WX"                                                               # Treat warnings as errors                                                         
         )
-else ()
-    set (WARN_C_FLAGS_TO_CHECK                    
+else () # Assume GCC or Clang                               
+    set (WARN_CXX_FLAGS_TO_CHECK                    
         "-Wall"                                                             # All warnings
         "-Wextra"                                                           # Extra warnings
         "-Wpedantic"                                                        # Pedantic warnings
         "-Werror"                                                           # Treat warnings as errors
         "-Wcast-align"                                                      # Warn for potential performance problem casts
         "-Wcast-qual"                                                       # Warn for casts discarding qualifiers
-        "-std=c17"                                                          # C standard
         )
 endif ()
 
-set (BUILD_TYPE_FLAGS "${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+# Add build type flags to the list of flags to check
+set (BUILD_TYPE_FLAGS "${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 string (REPLACE " " ";" BUILD_TYPE_FLAGS_LIST ${BUILD_TYPE_FLAGS})
-set (WARN_C_FLAGS_TO_CHECK_LIST "${WARN_C_FLAGS_TO_CHECK};${BUILD_TYPE_FLAGS_LIST}")
-message(STATUS "WARN_C_FLAGS_TO_CHECK_LIST: ${WARN_C_FLAGS_TO_CHECK_LIST}")
-
+set (WARN_CXX_FLAGS_TO_CHECK_LIST "${WARN_CXX_FLAGS_TO_CHECK};${BUILD_TYPE_FLAGS_LIST}")
 
 # Check if the compiler supports the flags
-foreach (FLAG ${WARN_C_FLAGS_TO_CHECK_LIST})
+foreach (FLAG ${WARN_CXX_FLAGS_TO_CHECK_LIST})
     # Remove [+-=] signs from the flag
     string(REGEX REPLACE "[-=+]" "" FLAG_NO_SIGNS ${FLAG})
     # Check if the flag is supported by the compiler
-    CHECK_C_COMPILER_FLAG (${FLAG} C_COMPILER_SUPPORTS_${FLAG_NO_SIGNS})
+    CHECK_CXX_COMPILER_FLAG (${FLAG} CXX_COMPILER_SUPPORTS_${FLAG_NO_SIGNS})
     # If so add it to the list of warning flags
-    if (C_COMPILER_SUPPORTS_${FLAG_NO_SIGNS})
-        set (WARN_C_FLAGS "${WARN_C_FLAGS} ${FLAG}")
+    if (CXX_COMPILER_SUPPORTS_${FLAG_NO_SIGNS})
+        set (WARN_CXX_FLAGS "${WARN_CXX_FLAGS} ${FLAG}")
     endif ()
 endforeach ()
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WARN_C_FLAGS}")
 
-if(CMAKE_C_COMPILER_LOADED)
+# Set CMAKE_CXX_FLAGS and CMAKE_C_FLAGS
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARN_CXX_FLAGS}")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WARN_CXX_FLAGS}")
+
+if(CMAKE_CXX_COMPILER_LOADED AND CMAKE_C_COMPILER_LOADED)
+    message (STATUS "C++ Compiler is loaded")
+    message (STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+    message (STATUS "CMAKE_CXX_COMPILER_ID is ${CMAKE_CXX_COMPILER_ID}")
+    message (STATUS "CMAKE_CXX_COMPILER is ${CMAKE_CXX_COMPILER}")
+    message (STATUS "CMAKE_CXX_COMPILER_VERSION is ${CMAKE_CXX_COMPILER_VERSION}")
     message (STATUS "C Compiler is loaded")
     message (STATUS "CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
     message (STATUS "CMAKE_C_COMPILER_ID is ${CMAKE_C_COMPILER_ID}")
     message (STATUS "CMAKE_C_COMPILER is ${CMAKE_C_COMPILER}")
     message (STATUS "CMAKE_C_COMPILER_VERSION is ${CMAKE_C_COMPILER_VERSION}")
-else ()
+elseif (CMAKE_CXX_COMPILER_LOADED)
     message (FATAL_ERROR "C Compiler is not loaded [FATAL ERROR]")
-endif()
+else ()
+    message (FATAL_ERROR "C++ Compiler is not loaded [FATAL ERROR]")
+endif ()
 
 # Set include directories
 set (INCLUDES ${PROJECT_SOURCE_DIR}/include)
 include_directories (${INCLUDES})
 
 # Set source directories
-file (GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.c")
+file (GLOB SOURCES *.c *.cpp  *.h *.hpp */*.c */*.cpp */*.h */*.hpp)
 
 # Generate shared library
 add_library (${PROJECT_NAME}_library SHARED ${SOURCES})
