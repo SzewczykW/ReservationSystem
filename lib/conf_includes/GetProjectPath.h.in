@@ -1,0 +1,6 @@
+#ifndef DATA_PATH_H_IN
+#define DATA_PATH_H_IN
+
+#define DATA_PATH "@CMAKE_ROOT_DIR@/data/ExempData.csv"
+
+#endif // DATA_PATH_H_IN

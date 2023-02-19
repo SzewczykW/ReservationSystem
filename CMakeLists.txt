@@ -2,6 +2,10 @@
 
 cmake_minimum_required ( VERSION 3.3.0 FATAL_ERROR )
 
+############################################################################################################
+
+set ( CMAKE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "Root directory of the project" )
+
 # Set the output directory for the executables and libraries
 # The destination of install is set to the build directory to avoid permission issues and to not pollute the system binary directories
 set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )

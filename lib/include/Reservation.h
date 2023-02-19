@@ -1,32 +1,40 @@
 #ifndef RESERVATIONS_H
 #define RESERVATIONS_H
 
+#include "GetRootProjectPath.h"
+#include "FileTools.h"
+
+#define RESERVATION_STATUS_AVAILABLE "Available"
+#define RESERVATION_STATUS_RESERVED "Reserved"
+#define RESERVATION_STATUS_OCCUPIED "Occupied"
+
 class Reservation {
+    friend FILE* OpenFile(const char* const file_name, const char* const mode);
     public:   
         static Reservation MakeReservation(void);
         static void PrintAvailableRooms();
-        
+        static FILE* GetFilePointer()               { return pfile; } // adjourn to FileTools Class and make it private
         /**
          * @brief Getter methods for reservation details
          */
-        unsigned int GetUserId() const;
-        unsigned int GetRoomId() const { return _RoomId;}
-        unsigned int GetStartDate() const;
-        unsigned int GetEndDate() const;
-        unsigned int GetPrice() const;
-        unsigned int GetStatus() const;
-        unsigned int GetType() const;
+        unsigned int GetUserId() const              { return _UserId; }
+        unsigned int GetRoomId() const              { return _RoomId; }
+        unsigned int GetStartDate() const           { return _StartDate; }
+        unsigned int GetEndDate() const             { return _EndDate; }
+        unsigned int GetPrice() const               { return _Price; }
+        unsigned int GetStatus() const              { return _Status; }
+        unsigned int GetType() const                { return _Type; }
 
         /**
          * @brief Setter methods for reservation details
          */ 
-        void SetUserId(unsigned int UserId);
-        void SetRoomId(unsigned int RoomId);
-        void SetStartDate(unsigned int StartDate);
-        void SetEndDate(unsigned int EndDate);
-        void SetPrice(unsigned int Price);
-        void SetStatus(unsigned int Status);
-        void SetType(unsigned int Type);
+        void SetUserId(unsigned int UserId)         { _UserId = UserId; }
+        void SetRoomId(unsigned int RoomId)         { _RoomId = RoomId; }
+        void SetStartDate(unsigned int StartDate)   { _StartDate = StartDate; }
+        void SetEndDate(unsigned int EndDate)       { _EndDate = EndDate; }
+        void SetPrice(unsigned int Price)           { _Price = Price; }
+        void SetStatus(unsigned int Status)         { _Status = Status; }
+        void SetType(unsigned int Type)             { _Type = Type; }
 
     private:
         /**
@@ -40,14 +48,13 @@ class Reservation {
             unsigned int EndDate,
             unsigned int Price,
             unsigned int Status,
-            unsigned int Type,
-            unsigned int Size
+            unsigned int Type
         ) : _UserId(UserId), _RoomId(RoomId), _StartDate(StartDate), 
-            _EndDate(EndDate), _Price(Price), _Status(Status), _Type(Type), _Size(Size) {}
+            _EndDate(EndDate), _Price(Price), _Status(Status), _Type(Type){}
 
         /**
          * @brief Reservation details
-         * @param _UserId, _RoomId, _StartDate, _EndDate, _Price, _Status, _Type, _Size
+         * @param _UserId, _RoomId, _StartDate, _EndDate, _Price, _Status, _Type
          */
         unsigned int _UserId;
         unsigned int _RoomId;
@@ -56,7 +63,8 @@ class Reservation {
         unsigned int _Price;
         unsigned int _Status;
         unsigned int _Type;
-        unsigned int _Size;
+
+        static FILE* pfile;
 };
 
 #endif

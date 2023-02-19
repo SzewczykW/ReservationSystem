@@ -17,7 +17,7 @@ def RandomRoom(room_id) -> str :
     return f'{room_num},{room_type},{room_price},{room_status},{starting_date},{ending_date}'
 
 PATH = os.path.dirname(__file__)
-PATH = os.path.join(PATH, 'ExempData')
+PATH = os.path.join(PATH, 'ExempData.csv')
 
 
 with open(PATH, 'wb') as f :

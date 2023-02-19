@@ -13,6 +13,3 @@ add_custom_target ( GenExempData
                     COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/GenExempData.py)
 
 ############################################################################################################
-
-#set (DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/GenExempData.py
-#     PY_DATA_PATH CACHE INTERNAL "${CMAKE_CURRENT_SOURCE_DIR}/GenExemp")

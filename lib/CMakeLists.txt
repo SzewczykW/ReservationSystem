@@ -10,6 +10,15 @@ add_definitions( ${ReservationSystem_DEFINITIONS} )
 set ( HEADERS_DIR ${PROJECT_SOURCE_DIR}/include )
 file ( GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp )
 
+############################################################################################################
+
+# Generate GetRootProjectPath.h
+configure_file( "${PROJECT_SOURCE_DIR}/conf_includes/GetProjectPath.h.in" "${PROJECT_BINARY_DIR}/GenInclude/GetRootProjectPath.h" )
+# Include generated file
+include_directories( "${PROJECT_BINARY_DIR}/GenInclude" ) 
+
+############################################################################################################
+
 include_directories ( ${HEADERS_DIR} )
 
 # Create Shared library
