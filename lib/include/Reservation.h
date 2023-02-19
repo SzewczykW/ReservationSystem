@@ -1,19 +1,26 @@
 #ifndef RESERVATIONS_H
 #define RESERVATIONS_H
 
-#include "GetRootProjectPath.h"
-#include "FileTools.h"
-
 #define RESERVATION_STATUS_AVAILABLE "Available"
 #define RESERVATION_STATUS_RESERVED "Reserved"
 #define RESERVATION_STATUS_OCCUPIED "Occupied"
 
 class Reservation {
-    friend FILE* OpenFile(const char* const file_name, const char* const mode);
-    public:   
-        static Reservation MakeReservation(void);
-        static void PrintAvailableRooms();
-        static FILE* GetFilePointer()               { return pfile; } // adjourn to FileTools Class and make it private
+    public:
+        /**
+        *@brief Constructor for Reservation object
+        * which contains informations about the reservation
+        */
+        Reservation(
+            unsigned int UserId,
+            unsigned int RoomId,
+            unsigned int StartDate,
+            unsigned int EndDate,
+            unsigned int Price,
+            unsigned int Status,
+            unsigned int Type
+        ): _UserId(UserId), _RoomId(RoomId), _StartDate(StartDate),
+        _EndDate(EndDate), _Price(Price), _Status(Status), _Type(Type){}
         /**
          * @brief Getter methods for reservation details
          */
@@ -38,21 +45,6 @@ class Reservation {
 
     private:
         /**
-         * @brief Constructor for Reservation object
-         * which contains informations about the reservation
-         */
-        Reservation (
-            unsigned int UserId,
-            unsigned int RoomId,
-            unsigned int StartDate,
-            unsigned int EndDate,
-            unsigned int Price,
-            unsigned int Status,
-            unsigned int Type
-        ) : _UserId(UserId), _RoomId(RoomId), _StartDate(StartDate), 
-            _EndDate(EndDate), _Price(Price), _Status(Status), _Type(Type){}
-
-        /**
          * @brief Reservation details
          * @param _UserId, _RoomId, _StartDate, _EndDate, _Price, _Status, _Type
          */
@@ -63,8 +55,6 @@ class Reservation {
         unsigned int _Price;
         unsigned int _Status;
         unsigned int _Type;
-
-        static FILE* pfile;
 };
 
 #endif

@@ -4,7 +4,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cstdbool>
 
 /**
  * @brief Saffer version of fgets which returns NULL if string starts with newline and checks

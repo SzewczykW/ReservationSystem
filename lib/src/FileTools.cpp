@@ -115,7 +115,15 @@ FILE* OpenFile(const char* const file_name, const char* const mode) {
         printf("Error: Could not open file %s\n", file_name);
         exit(EXIT_FAILURE);
     }
+
     rewind(pfile);
+
+    if (TestDataFileFormat(pfile) == false) {
+        exit(EXIT_FAILURE);
+    }
+
+    rewind(pfile);
+
     return pfile;
 }
 
