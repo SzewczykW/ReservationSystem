@@ -1,24 +1,18 @@
 #include "ReservationSystem.h"
+#include "GetRootProjectPath.h"
 
-Reservation ReservationSystem::MakeReservation(void)
-{
-    PrintAvailableRooms();
-    return Reservation(0, 0, 0, 0, 0, 0, 0);
+ReservationSystem::ReservationSystem() {
+    _pFile = OpenFile(DATA_PATH, "rb");
 }
 
-void ReservationSystem::PrintAvailableRooms()
-{
+void ReservationSystem::PrintAvailableRooms() {
     char buffer[256];
     char room_id[10];
-    unsigned int count = 0;
+     int count = 0;
 
-    if (GetStr(buffer, 256, pfile) != NULL)
-    {
-        while (!feof(pfile) && !ferror(pfile))
-        {
-            if (strstr(buffer, RESERVATION_STATUS_AVAILABLE) != NULL)
-            {
-
+    if (GetStr(buffer, 256, _pFile) != NULL) {
+        while (!feof(_pFile) && !ferror(_pFile)) {
+            if (strstr(buffer, RESERVATION_STATUS_AVAILABLE) != NULL) {
                 char* first_comma = static_cast<char*> (memchr(buffer, ',', 10));
 
                 int room_id_length = first_comma - buffer; // get the length of the room id
@@ -33,26 +27,25 @@ void ReservationSystem::PrintAvailableRooms()
                     fputc('\n', stdout);
                 }
             }
-            if (GetStr(buffer, 256, pfile) != NULL)
-            { // get the next line
+            if (GetStr(buffer, 256, _pFile) != NULL) { // get the next line
                 continue;
             }
-            else
-            { // if we reached the end of the file
+            else { // if we reached the end of the file
                 break;
             }
         }
     }
-    if (count % 10 != 9)
-    {
+    if (count % 10 != 9) {
         fputc('\n', stdout);
     }
+
+    rewind(_pFile);
 }
 
 FILE* ReservationSystem::GetFilePointer() {
-    return pfile;
+    return _pFile;
 }
 
 void ReservationSystem::SetFilePointer(const char* const file_name, const char* const mode) {
-    pfile = OpenFile(file_name, mode);
+    _pFile = OpenFile(file_name, mode);
 }

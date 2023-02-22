@@ -1,6 +1,6 @@
 #include "FileTools.h"
 
-char* GetStr(char* const buff, const unsigned int buff_size, FILE* const pfile) {
+char* GetStr(char* const buff, const  int buff_size, FILE* const pfile) {
     memset(buff, 0, buff_size);
 
     char* result = NULL;
@@ -22,7 +22,7 @@ char* GetStr(char* const buff, const unsigned int buff_size, FILE* const pfile) 
 bool TestDataFileFormat(FILE* pfile) {
     char buffer[256];
     char* token;
-    unsigned int commas_per_line = 0;
+     int commas_per_line = 0;
     char everything_but_integrers[] = " !\"#$ % &'()*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"; // only numbers are allowed
     char everything_but_floats[] = " !\"#$ % &'()*+,-/:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"; // dots and numbers is allowed
     char everything_but_alpha_paratheses[] = " !\"#$ % &'*+,-./:;<=>?@0123456789[\\]^_`{|}~"; // only letters and parentheses are allowed

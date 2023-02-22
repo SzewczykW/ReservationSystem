@@ -3,19 +3,22 @@
 cmake_minimum_required ( VERSION 3.3.0 FATAL_ERROR )
 project ( "ReservationsLib" )
 
+############################################################################################################
+
+# Generate GetRootProjectPath.h
+configure_file( "${PROJECT_SOURCE_DIR}/conf_include/GetRootProjectPath.h.in" "${PROJECT_BINARY_DIR}/GenInclude/GetRootProjectPath.h" )
+
+# Include generated file
+include_directories( "${PROJECT_BINARY_DIR}/GenInclude" ) 
+
+############################################################################################################
+
 add_definitions( ${ReservationSystem_DEFINITIONS} )
 
 ############################################################################################################
 
 set ( HEADERS_DIR ${PROJECT_SOURCE_DIR}/include )
 file ( GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp )
-
-############################################################################################################
-
-# Generate GetRootProjectPath.h
-configure_file( "${PROJECT_SOURCE_DIR}/conf_includes/GetProjectPath.h.in" "${PROJECT_BINARY_DIR}/GenInclude/GetRootProjectPath.h" )
-# Include generated file
-include_directories( "${PROJECT_BINARY_DIR}/GenInclude" ) 
 
 ############################################################################################################
 

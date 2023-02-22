@@ -11,7 +11,7 @@
  * @param buff, buff_size, pfile 
  * @return pointer to buff or NUll if string starts with newline
  */
-char* GetStr(char* const buff, const unsigned int buff_size, FILE* const pfile);
+char* GetStr(char* const buff, const  int buff_size, FILE* const pfile);
 /**
  * @brief Check whether the file is csv file or not and also if the structure of is as follows:
  * RoomId, RoomType, RoomPrice, RoomStatus, OcupancyStartDate, OcupancyEndDate
@@ -33,5 +33,13 @@ FILE* OpenFile(const char* const file_name, const char* const mode);
  * @return bool value true if file is closed successfully and false if not
  */
 bool CloseFile(FILE* pfile);
+
+/**
+ * @brief Converts  int to string
+ * @param number 
+ * @param str 
+ * @return 
+ */
+char* UIntToStr( int number, char* str);
 
 #endif

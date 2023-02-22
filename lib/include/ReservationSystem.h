@@ -2,17 +2,15 @@
 #define RESERVATION_SYSTEM_H
 
 #include "Reservation.h"
-#include "GetRootProjectPath.h"
 #include "FileTools.h"
 
 class ReservationSystem {
-    friend FILE* OpenFile(const char* const file_name, const char* const mode);
     public:
-        Reservation MakeReservation(void);
+        ReservationSystem();
         void PrintAvailableRooms();
         FILE* GetFilePointer();
         void SetFilePointer(const char* const file_name, const char* const mode);
     private:
-        FILE* pfile;
+        FILE* _pFile;
 };
 #endif

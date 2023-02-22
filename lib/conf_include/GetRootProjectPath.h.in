@@ -1,0 +1,6 @@
+#ifndef GetRootProjectPath_H
+#define GetRootProjectPath_H
+
+#define DATA_PATH "@CMAKE_ROOT_DIR@/data/ExempData.csv"
+
+#endif
